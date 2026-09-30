@@ -1,0 +1,367 @@
+#spCommandBar,
+#spSiteHeader,
+#spLeftNav,
+.ommandBarWrapper,
+.sp-appBar,
+#CommentsWrapper {
+    display: none !important;
+}
+
+.CanvasZoneSectionContainer {
+    max-width: 100% !important;
+}
+
+#mainContainer,
+#mainContainer * {
+    font-size: 100% !important;
+}
+
+.spAppAndPropertyPanelContainer {
+    padding-bottom: 0px !important;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #ce0b0e;
+    color: white;
+    height: 100vh;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+    position: sticky;
+    top: 0;
+}
+
+.sidehead {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.sidehead img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.logo {
+    font-size: 24px;
+    margin-left: 10px;
+    font-weight: bold;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.nav {
+    list-style: none;
+    padding: 0;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.nav-item {
+    margin: 0;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 20px;
+    color: white !important;
+    text-decoration: none;
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.3s ease;
+    user-select: none;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+    font-weight: bold;
+    background: linear-gradient(to right, #000000, #d60000);
+}
+
+.nav > .nav-item > .nav-link.active::before {
+    content: "";
+    position: absolute;
+    top: 8px;
+    right: 0;
+    border-top: 17px solid transparent;
+    border-bottom: 17px solid transparent;
+    border-right: 17px solid #dddddd;
+    z-index: 1;
+}
+
+.nav > .nav-item > .nav-link.active::after {
+    content: "";
+    position: absolute;
+    top: 8px;
+    right: -1px;
+    border-top: 17px solid transparent;
+    border-bottom: 17px solid transparent;
+    border-right: 17px solid #f4f3ef;
+    z-index: 2;
+}
+
+.nav-item.has-submenu {
+    position: relative;
+}
+
+/* Inline submenu markup: used ONLY for the mobile in-place accordion
+   (toggled via the .show class). On desktop it stays permanently hidden -
+   the desktop version is rendered separately as a viewport-clamped
+   .desktop-flyout portal so it can never get cut off or trapped behind an
+   ancestor's overflow/scrollbar. */
+.sub-menu {
+    position: absolute;
+    top: 0px;
+    left: 100%;
+    background-color: #a80c0e;
+    min-width: 180px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-left: 2px solid #fff;
+    box-shadow: 4px 0 8px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(10px);
+    transition: all 0.2s ease-in-out;
+    z-index: 100;
+}
+
+/* The desktop flyout is portaled to <body> and positioned with inline
+   top/left/maxHeight computed in JS (clamped to the viewport), so it always
+   renders fully on-screen with its own scrollbar if it's taller than the
+   available space - regardless of where its trigger sits in the sidebar. */
+.desktop-flyout {
+    position: fixed;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
+}
+
+.desktop-flyout::-webkit-scrollbar {
+    width: 6px;
+}
+
+.desktop-flyout::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 3px;
+}
+
+.sub-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sub-menu li {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sub-menu li a {
+    display: block;
+    padding: 12px 20px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+    }
+}
+
+/* Keep icons inside submenu links neatly aligned, same idea as top-level nav icons */
+.sub-menu li a i,
+.report-group li a i {
+    width: 16px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.reports-menu {
+    top: 0;
+    left: 100%;
+    min-width: 260px;
+    padding: 16px 0;
+    border-left: 2px solid #fff;
+    max-height: 80vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
+}
+
+.reports-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.reports-menu::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 3px;
+}
+
+.report-group {
+    padding: 0 20px;
+}
+
+.report-group-title {
+    font-weight: bold;
+    color:#fff;
+    padding: 6px 0;
+    font-size: 14px;
+}
+
+.report-group-divider {
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.3);
+    margin: 12px 0;
+}
+
+.report-group ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.report-group li a {
+    padding: 6px 0;
+    font-size: 14px;
+}
+
+.nav-item.has-submenu.active>.nav-link {
+    font-weight: bold;
+    background: linear-gradient(to right, #000000, #d60000);
+}
+
+.sidehead-user {
+    align-items: center;
+    border-bottom: 1px solid hsla(0, 0%, 100%, .2);
+    display: flex;
+    font-weight: 600;
+    padding: 10px 0;
+}
+
+.sidehead-user i {
+    background-color: rgba(0, 0, 0, .7);
+    border-radius: 50%;
+    padding: 10px;
+    width: auto;
+}
+
+.mobile-toggle {
+    background: #ce0b0e;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    display: none;
+    font-size: 13px;
+    left: 15px;
+    top: 15px;
+    padding: 7px 10px;
+    position: absolute;
+    z-index: 1200;
+}
+
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+}
+
+.submenu-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.submenu-title i {
+    width: 16px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+@media screen and (max-width: 768px) {
+
+    .mobile-toggle {
+        display: block;
+    }
+
+    .sidebar {
+        position: fixed;
+        left: -260px;
+        top: 0;
+        width: 250px;
+        height: 100%;
+        z-index: 999;
+        transition: all 0.3s ease;
+        overflow-y: auto;
+    }
+
+    .sidebar.open {
+        left: 0;
+    }
+
+    .nav {
+        gap: 0;
+    }
+
+    .nav-item {
+        width: 100%;
+    }
+
+    .nav-link {
+        padding: 14px 18px;
+    }
+
+    .nav-item.has-submenu:hover .sub-menu {
+        display: none;
+    }
+
+    /* Safety net: if the viewport crosses the breakpoint while a flyout is
+       open (e.g. rotating a tablet), never show the fixed-position portal
+       version on mobile - only the in-place accordion should be visible. */
+    .desktop-flyout {
+        display: none !important;
+    }
+
+    .sub-menu {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        display: none;
+        background: #a80c0e;
+        box-shadow: none;
+        border-left: none;
+        min-width: 100%;
+    }
+
+    .mobile-submenu.show {
+        display: block !important;
+    }
+
+    .sub-menu li a {
+        padding-left: 40px;
+        font-size: 14px;
+    }
+
+    .report-group li a {
+        padding-left: 20px;
+    }
+}
