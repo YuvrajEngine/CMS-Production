@@ -11,6 +11,8 @@ import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import * as strings from 'CmsProductionWebPartStrings';
 import CmsProduction from './components/CmsProduction';
 import { ICmsProductionProps } from './components/ICmsProductionProps';
+// import IEmployeeProfileops from './service/BAL/EmployeeProfile';
+import SPCRUDOPS from './service/DAL/spcrudops';
 
 export interface ICmsProductionWebPartProps {
   description: string;
@@ -21,7 +23,72 @@ export default class CmsProductionWebPart extends BaseClientSideWebPart<ICmsProd
   private _isDarkTheme: boolean = false;
   private _environmentMessage: string = '';
 
-  public render(): void {
+  public async render(): Promise<void> {
+    let props = {
+      description: this.properties.description,
+      isDarkTheme: this._isDarkTheme,
+      environmentMessage: this._environmentMessage,
+      hasTeamsContext: !!this.context.sdks.microsoftTeams,
+      userDisplayName: this.context.pageContext.user.displayName,
+      currentSPContext: this.context,
+      userEmail: this.context.pageContext.user.email
+    }
+    // const itemdata = await IEmployeeProfileops().getEmployeeProfile(this.context.pageContext.user.email, props);
+ 
+    const IVPRACL = async () => {
+      const spCrudOps = await SPCRUDOPS();
+      const AppAdminData = await spCrudOps.getRootData(
+        'AppAdmin',
+        'Title,AdminName/EMail,AppName,EmployeeID,AppName',
+        'AdminName',
+        '',
+        { column: 'ID', isAscending: true },
+        props
+      );
+ 
+      const VPRACLdata = await spCrudOps.getData(
+        'CMS_ACL',
+        'Title,UserName/EMail,Role,UserName/ID',
+        'UserName',
+        '',
+        { column: 'ID', isAscending: true },
+        props
+      );
+ 
+      let AAfiltereddata = AppAdminData.filter((m: any) => (m.AppName === 'CMS'));
+      let AppDatafiltered = VPRACLdata;
+      let Maintfiltereddata = VPRACLdata.filter((m: any) => m.Title === "Maintenance");
+      let SysAdmindata = VPRACLdata.filter((m: any) => (m.Title === "SysAdmin"))
+ 
+      // Default values
+      let isAppAdmin: boolean = false;
+      let isMaintenance: boolean = false;
+      let isEditor: boolean = false;
+      let SysAdmin: boolean = false;
+ 
+      if (SysAdmindata.length > 0) {
+        isAppAdmin = true;
+        isEditor = true;
+        SysAdmin = true;
+      }
+      else {
+        if (AAfiltereddata[0]?.AppName === 'CMS') {
+          isAppAdmin = true;
+        }
+        if (AppDatafiltered[0]?.Role === 'Editor') {
+          isEditor = true;
+        }
+      }
+ 
+      if (Maintfiltereddata.length > 0) {
+        isMaintenance = true;
+      }
+ 
+      return { isAppAdmin, isEditor, isMaintenance, SysAdmin };
+    };
+ 
+    // ✅ Get ACL values
+    const { isAppAdmin, isEditor, isMaintenance, SysAdmin } = await IVPRACL();
     const element: React.ReactElement<ICmsProductionProps> = React.createElement(
       CmsProduction,
       {
@@ -32,10 +99,16 @@ export default class CmsProductionWebPart extends BaseClientSideWebPart<ICmsProd
         userDisplayName: this.context.pageContext.user.displayName,
         currentSPContext: this.context,
         userEmail: this.context.pageContext.user.email,
-        webAbsoluteUrl: this.context.pageContext.web.absoluteUrl
+        userId: this.context.pageContext.legacyPageContext.userId,
+        // EmployeeId: itemdata,
+        context: this.context,
+        Appadmin: isAppAdmin,
+        Editor: isEditor,
+        Maintenance: isMaintenance,
+        SysAdmin: SysAdmin
       }
     );
-
+ 
     ReactDom.render(element, this.domElement);
   }
 

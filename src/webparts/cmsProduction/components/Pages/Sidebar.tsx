@@ -707,7 +707,7 @@ const Sidebar: React.FC<ISidebarProps> = (props: ISidebarProps) => {
             </DesktopFlyout>
           </li>
 
-          {AppAdmin && (
+          {(AppAdmin || Admin) && (
             <li
               className={`nav-item has-submenu ${appSettingsHasActiveChild ? 'active' : ''}`}
               onMouseEnter={() => openFlyout('app-settings')}

@@ -33,13 +33,65 @@ import BreakpointSheet from './Pages/BreakpointSheet';
 const Cms: React.FC<ICmsProductionProps> = (props) => {
   const { hasTeamsContext } = props;
 
+  const hasAccess = props.userEmail.length > 0;
+ 
+  const QueryParamWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    React.useEffect(() => {
+      const url = new URL(window.location.href);
+ 
+      // If env is not already present, add it
+      if (!url.searchParams.has("env")) {
+        url.searchParams.set("env", "WebViewList");
+ 
+        // Clean hash: remove any ?env=WebViewList from inside the hash routes
+        const cleanHash = url.hash.replace(/\?env=WebViewList/, "");
+ 
+        // Build correct final URL
+        const newUrl = `${url.origin}${url.pathname}?${url.searchParams.toString()}${cleanHash}`;
+ 
+        // Update without reload
+        window.history.replaceState({}, "", newUrl);
+      }
+    }, []);
+ 
+    return <>{children}</>;
+  };
+
+  if (props.Maintenance === true) {
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "100vh", width: "100vw", overflow: "hidden" }}
+      >
+        <img
+          src="../SiteAssets/Custom/imgs/Maintenance.png"
+          alt="Maintenance Mode"
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover"
+          }}
+        />
+      </div>
+    );
+  }
+  else if (!hasAccess) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <h3>No access. Please contact the IT team.</h3>
+      </div>
+    );
+  }
+ 
+
   return (
     <div
       className={`${styles.cmsProduction} ${hasTeamsContext ? styles.teams : ''}`}
       style={{ display: 'flex', width: '100%', height: '100vh' }}
     >
       <HashRouter>
-        <Sidebar {...props} />
+        <QueryParamWrapper>
+          <Sidebar {...props} />
         <Switch>
           <Route exact path="/" render={() => <Home {...props} />} />
           <Route exact path="/PartActionCompleted" render={() => <PartActionCompleted {...props} />} />
@@ -65,6 +117,7 @@ const Cms: React.FC<ICmsProductionProps> = (props) => {
           <Route exact path="/BPRSRequestForm/:bprsId" render={() => <BreakpointSheet {...props} />} />
           <Route render={() => <Home {...props} />} />
         </Switch>
+        </QueryParamWrapper>
       </HashRouter>
     </div>
   );
