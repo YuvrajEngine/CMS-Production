@@ -72,15 +72,12 @@ const pathToPageKey = (pathname: string): string => {
   return pathname === '/' || pathname === '' ? 'dashboard' : pathname.replace(/^\//, '');
 };
 
-const buildSPListUrl = (webAbsoluteUrl: any, pageKey: string): string => {
+const buildSPListUrl = (webUrl: any, pageKey: string): string => {
   const relativePath = SP_LIST_PATHS[pageKey];
-  if (!relativePath) {
+  if (!relativePath || !webUrl) {
     return '#';
   }
-  if (!webAbsoluteUrl) {
-    return relativePath;
-  }
-  const base = String(webAbsoluteUrl).replace(/\/+$/, '');
+  const base = String(webUrl).replace(/\/+$/, '');
   return `${base}${relativePath}`;
 };
 
@@ -161,6 +158,11 @@ const DesktopFlyout: React.FC<{
 const Sidebar: React.FC<ISidebarProps> = (props: ISidebarProps) => {
 
   const { userDisplayName, webAbsoluteUrl, onNavigate } = props;
+
+  const webUrl: string =
+  props.currentSPContext?.pageContext?.web?.absoluteUrl || webAbsoluteUrl || '';
+
+  console.log('Sidebar webUrl:', webUrl); 
 
   const history = useHistory();
   const location = useLocation();
@@ -309,7 +311,7 @@ const Sidebar: React.FC<ISidebarProps> = (props: ISidebarProps) => {
     e.preventDefault();
     e.stopPropagation();
 
-    const url = buildSPListUrl(webAbsoluteUrl, pageKey);
+    const url = buildSPListUrl(webUrl, pageKey);
     const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
     if (newWindow) {
       newWindow.opener = null;
@@ -530,7 +532,7 @@ const Sidebar: React.FC<ISidebarProps> = (props: ISidebarProps) => {
           <li>
             <a
               className="nav-link"
-              href={buildSPListUrl(webAbsoluteUrl, 'settings-cms-list')}
+              href={buildSPListUrl(webUrl, 'settings-cms-list')}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => handleSPListClick(e, 'settings-cms-list')}
